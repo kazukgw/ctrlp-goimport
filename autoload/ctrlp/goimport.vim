@@ -20,7 +20,13 @@ else
 endif
 
 function! ctrlp#goimport#init()
-  let s = system('find $GOPATH/src -maxdepth 3 -type d | sed -e "s/$(echo $GOPATH | sed -E "s/([\/])/\\\\\1/g" )\/src\///g"')
+  if exists('g:ctrlp_goimport_path')
+    let p = g:ctrlp_goimport_path
+  else
+    let v = split(system('echo $GOPATH'), ':')[0]
+    let p = substitute(v, '^\s*\(.\{-}\)\s*$', '\1', '')
+  endif
+  let s = system('find '.p.'/src -maxdepth 3 -type d | sed -e "s/$(echo "'.p.'" | sed -E "s/([\/])/\\\\\1/g" )\/src\///g"')
   return split(s, "\n")
 endfunc
 
